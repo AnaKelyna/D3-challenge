@@ -22,13 +22,12 @@ var chartGroup = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 // Import Data
-d3.csv("data.csv").then(function(censusData) {
+d3.csv("assets/data/data.csv").then(function(censusData) {
 
     // Step 1: Parse Data/Cast as numbers
     // ==============================
     censusData.forEach(function(data) {
         data.id = +data.id;
-        data.abbr = +data.abbr;
         data.poverty = +data.poverty;
         data.povertyMoe = +data.povertyMoe;
         data.age = +data.age;
@@ -48,11 +47,11 @@ d3.csv("data.csv").then(function(censusData) {
     // Step 2: Create scale functions
     // ==============================
     var xLinearScale = d3.scaleLinear()
-        .domain([8, d3.max(data, d => d.poverty)])
+        .domain([8, d3.max(censusData, d => d.poverty) + 2])
         .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d.healthcare)])
+        .domain([2, d3.max(censusData, d => d.healthcare) + 3])
         .range([height, 0]);
 
     // Step 3: Create axis functions
@@ -114,14 +113,4 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
         .attr("class", "axisText")
         .text("In Poverty (%)");
-
-    // Initialize tooltip
-    var toolTip = d3.tip()
-        .attr("class", "tooltip")
-        .offset([80, -60])
-        .html(function(d) {
-            return `${d.state}<br>Poverty: ${d.poverty}<br>Healthcare: ${d.healthcare}<br>`;
-        });
-    // Create tooltip in the chart
-    chartGroup.call(toolTip);
 });
